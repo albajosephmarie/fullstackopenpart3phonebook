@@ -1,0 +1,40 @@
+GET http://localhost:3001/api/persons/
+
+###
+GET http://localhost:3001/info
+
+###
+POST http://localhost:3001/api/persons/ HTTP/1.1
+content-type: application/json
+
+{
+  "name": "Joseph",
+  "number": "9390200389"
+}
+
+###
+POST http://localhost:3001/api/persons/ HTTP/1.1
+content-type: application/json
+
+{
+  "name": "Peter",
+  "number": ""
+}
+
+###
+POST http://localhost:3001/api/persons/ HTTP/1.1
+content-type: application/json
+
+{
+  "name": "",
+  "number": "21"
+}
+
+###
+GET http://localhost:3001/api/persons/5
+
+###
+DELETE http://localhost:3001/api/persons/5
+
+###
+POST /api/persons 200 61 - 4.806 ms {"name":"Joseph", "number":"12345"}
