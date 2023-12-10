@@ -94,9 +94,30 @@ app.get("/api/persons/:id", (request, response, next) => {
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {
-  Person.findByIdAndRemove(request.params.id)
+  Person.findOneAndDelete({ id: request.params.id })
     .then((result) => {
       response.status(204).end();
+    })
+    .catch((error) => next(error));
+});
+
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body;
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  };
+
+  // Use findByIdAndUpdate to find and update the person
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      if (updatedPerson) {
+        response.json(updatedPerson);
+      } else {
+        // If the person with the specified ID is not found
+        response.status(404).json({ error: "Person not found" });
+      }
     })
     .catch((error) => next(error));
 });
