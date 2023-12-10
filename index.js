@@ -34,10 +34,16 @@ app.get("/", (request, response) => {
   response.send("<h1>Phonebook</h1>");
 });
 
-app.get("/info", (request, response) => {
-  const info = `<p>Phonebook has info for ${persons.length} people</p>`;
-  const currentTime = `<p>${new Date()}</p>`;
-  response.send(`${info}${currentTime}`);
+app.get("/info", (request, response, next) => {
+  Person.countDocuments({})
+    .then((count) => {
+      const info = `<p>Phonebook has info for ${count} people</p>`;
+      const currentTime = `<p>${new Date()}</p>`;
+      response.send(`${info}${currentTime}`);
+    })
+    .catch((error) => {
+      next(error); // Pass the error to the error handler middleware
+    });
 });
 
 app.get("/api/persons", (request, response) => {
