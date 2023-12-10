@@ -11,6 +11,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);
@@ -69,9 +71,12 @@ app.post("/api/persons", (request, response) => {
       if (existingPerson) {
         // If the person exists, update the number
         existingPerson.number = body.number;
-        existingPerson.save().then((updatedPerson) => {
-          response.json(updatedPerson);
-        });
+        existingPerson
+          .save()
+          .then((updatedPerson) => {
+            response.json(updatedPerson);
+          })
+          .catch((error) => next(error));
       } else {
         // If the person doesn't exist, create a new person
         const person = new Person({
@@ -79,9 +84,12 @@ app.post("/api/persons", (request, response) => {
           number: body.number,
         });
 
-        person.save().then((savedPerson) => {
-          response.json(savedPerson);
-        });
+        person
+          .save()
+          .then((savedPerson) => {
+            response.json(savedPerson);
+          })
+          .catch((error) => next(error));
       }
     })
     .catch((error) => next(error));
