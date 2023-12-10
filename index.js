@@ -100,9 +100,14 @@ app.get("/api/persons/:id", (request, response, next) => {
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {
-  Person.findOneAndDelete({ id: request.params.id })
+  Person.findByIdAndDelete(request.params.id)
     .then((result) => {
-      response.status(204).end();
+      if (result) {
+        response.status(204).end();
+      } else {
+        // If the person with the specified ID is not found
+        response.status(404).json({ error: "Person not found" });
+      }
     })
     .catch((error) => next(error));
 });
