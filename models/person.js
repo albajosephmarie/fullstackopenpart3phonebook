@@ -1,21 +1,22 @@
-const mongoose = require("mongoose");
-mongoose.set("strictQuery", false);
-const url = process.env.MONGODB_URI;
-console.log("connecting to", url);
+const mongoose = require('mongoose')
+mongoose.set('strictQuery', false)
+const url = process.env.MONGODB_URI
+console.log('connecting to', url)
 mongoose
   .connect(url)
+  // eslint-disable-next-line no-unused-vars
   .then((result) => {
-    console.log("connected to MongoDB");
+    console.log('connected to MongoDB')
   })
   .catch((error) => {
-    console.log("error connecting to MongoDB:", error.message);
-  });
+    console.log('error connecting to MongoDB:', error.message)
+  })
 
 const isValidPhoneNumber = (value) => {
   // Regular expression for validating phone numbers
-  const phoneRegex = /^(0[0-9]{1,2}-[0-9]{7,}|[1-9][0-9]{1,2}-[0-9]{8,})$/;
-  return phoneRegex.test(value);
-};
+  const phoneRegex = /^(0[0-9]{1,2}-[0-9]{7,}|[1-9][0-9]{1,2}-[0-9]{8,})$/
+  return phoneRegex.test(value)
+}
 
 const personSchema = new mongoose.Schema({
   name: {
@@ -30,14 +31,14 @@ const personSchema = new mongoose.Schema({
       message: 'Invalid phone number format. Please use the format 09-1234556 or 040-22334455.',
     },
   },
-});
+})
 
-personSchema.set("toJSON", {
+personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
   },
-});
+})
 
-module.exports = mongoose.model("Person", personSchema);
+module.exports = mongoose.model('Person', personSchema)
