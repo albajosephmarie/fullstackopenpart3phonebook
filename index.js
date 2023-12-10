@@ -54,7 +54,20 @@ app.get("/api/persons", (request, response) => {
   });
 });
 
-app.post("/api/persons", (request, response) => {
+
+app.get("/api/persons/:id", (request, response, next) => {
+  Person.findById(request.params.id)
+    .then((person) => {
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(nerror));
+});
+
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
   if (body.name === undefined) {
@@ -95,18 +108,6 @@ app.post("/api/persons", (request, response) => {
     .catch((error) => next(error));
 });
 
-app.get("/api/persons/:id", (request, response, next) => {
-  Person.findById(request.params.id)
-    .then((person) => {
-      if (person) {
-        response.json(person);
-      } else {
-        response.status(404).end();
-      }
-    })
-    .catch((error) => next(nerror));
-});
-
 app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
     .then((result) => {
@@ -119,6 +120,7 @@ app.delete("/api/persons/:id", (request, response, next) => {
     })
     .catch((error) => next(error));
 });
+
 
 app.put("/api/persons/:id", (request, response, next) => {
   const body = request.body;
