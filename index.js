@@ -53,25 +53,32 @@ app.post("/api/persons", (request, response) => {
     return response.status(400).json({ error: "name missing" });
   }
 
-  // const found = persons.find((person) => person.name === body.name);
-  // if (found) {
-  //   return response.status(400).json({
-  //     error: "name must be unique",
-  //   });
-  // }
-
   if (body.number === undefined) {
     return response.status(400).json({ error: "number missing" });
   }
 
-  const person = new Person({
-    name: body.name,
-    number: body.number,
-  });
+  // Check if the person with the given name already exists
+  Person.findOne({ name: body.name })
+    .then((existingPerson) => {
+      if (existingPerson) {
+        // If the person exists, update the number
+        existingPerson.number = body.number;
+        existingPerson.save().then((updatedPerson) => {
+          response.json(updatedPerson);
+        });
+      } else {
+        // If the person doesn't exist, create a new person
+        const person = new Person({
+          name: body.name,
+          number: body.number,
+        });
 
-  person.save().then((savedPerson) => {
-    response.json(savedPerson);
-  });
+        person.save().then((savedPerson) => {
+          response.json(savedPerson);
+        });
+      }
+    })
+    .catch((error) => next(error));
 });
 
 app.get("/api/persons/:id", (request, response, next) => {
@@ -90,21 +97,6 @@ app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
     .then((result) => {
       response.status(204).end();
-    })
-    .catch((error) => next(error));
-});
-
-app.put("/api/notes/:id", (request, response, next) => {
-  const body = request.body;
-
-  const person = {
-    name: body.name,
-    number: body.number,
-  };
-
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
-    .then((updatedPerson) => {
-      response.json(updatedPerson);
     })
     .catch((error) => next(error));
 });
