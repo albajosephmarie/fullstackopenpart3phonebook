@@ -54,7 +54,6 @@ app.get("/api/persons", (request, response) => {
   });
 });
 
-
 app.get("/api/persons/:id", (request, response, next) => {
   Person.findById(request.params.id)
     .then((person) => {
@@ -121,24 +120,20 @@ app.delete("/api/persons/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-
 app.put("/api/persons/:id", (request, response, next) => {
-  const body = request.body;
+  const { name, number } = request.body;
 
-  const person = {
-    name: body.name,
-    number: body.number,
-  };
-
-  // Use findByIdAndUpdate to find and update the person
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(
+    request.params.id,
+    { name, number },
+    {
+      new: true,
+      runValidators: true,
+      context: "query",
+    }
+  )
     .then((updatedPerson) => {
-      if (updatedPerson) {
-        response.json(updatedPerson);
-      } else {
-        // If the person with the specified ID is not found
-        response.status(404).json({ error: "Person not found" });
-      }
+      response.json(updatedPerson);
     })
     .catch((error) => next(error));
 });
