@@ -37,6 +37,8 @@ let persons = [
   },
 ];
 
+app.use(express.static('dist'))
+
 app.get("/", (request, response) => {
   response.send("<h1>Phonebook</h1>");
 });
