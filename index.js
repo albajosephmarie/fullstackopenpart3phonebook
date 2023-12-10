@@ -1,16 +1,18 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
+const Person = require("./models/person");
 const cors = require("cors");
 
 const app = express();
 // Define a custom token for morgan to log request body
 morgan.token("req-body", (request, response) => JSON.stringify(request.body));
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 // Use Morgan middleware with a custom format
 app.use(
   morgan(
-    ':method :url :status :res[content-length] - :response-time ms :req-body'
+    ":method :url :status :res[content-length] - :response-time ms :req-body"
   )
 );
 
@@ -37,7 +39,7 @@ let persons = [
   },
 ];
 
-app.use(express.static('dist'))
+app.use(express.static("dist"));
 
 app.get("/", (request, response) => {
   response.send("<h1>Phonebook</h1>");
@@ -50,7 +52,9 @@ app.get("/info", (request, response) => {
 });
 
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.findOne({}).then((persons) => {
+    response.json(persons);
+  });
 });
 
 app.get("/api/persons/:id", (request, response) => {
@@ -111,7 +115,7 @@ app.delete("/api/persons/:id", (request, response) => {
   response.status(204).end();
 });
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+  console.log(`Server running on port ${PORT}`);
+});

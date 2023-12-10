@@ -37,4 +37,3 @@ GET http://localhost:3001/api/persons/5
 DELETE http://localhost:3001/api/persons/5
 
 ###
-POST /api/persons 200 61 - 4.806 ms {"name":"Joseph", "number":"12345"}
